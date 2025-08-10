@@ -1,0 +1,41 @@
+.panel {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: 50px 1fr;
+  grid-template-areas:
+    "sidebar topbar"
+    "sidebar main";
+  height: 100vh;
+}
+
+.panel__topbar {
+  grid-area: topbar;
+  background: var(--Second-background-color);
+  border-left: 1px solid rgb(26, 26, 26);
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+.panel__sidebar {
+  grid-area: sidebar;
+  background: var(--Second-background-color);
+  /* border-right: 3px solid var(--divider-color); */
+  color: white;
+  padding: 1rem;
+  overflow: hidden;
+  /* Optional: lock sidebar scroll */
+}
+
+.panel__main {
+  grid-area: main;
+  padding: 1rem;
+  overflow-y: auto;
+  /* Enable vertical scroll */
+  /* overflow: scroll;
+  width: 100%;
+  height: 100%;
+  position: relative; */
+
+}

@@ -1,0 +1,16 @@
+@import url("./vendor/theme.css");
+@import url("./vendor/normalize.css");
+@import url("./blockes/panel.css");
+@import url("./blockes/canvas.css");
+@import url("./blockes/uielement.css");
+@import url("./blockes/toolwheel.css");
+
+html,
+body,
+footer {
+  color: var(--text-color);
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}

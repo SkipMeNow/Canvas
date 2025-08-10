@@ -1,0 +1,35 @@
+.canvas__wrapper {
+  width: 10000px;
+  height: 10000px;
+  position: relative;
+}
+
+.canvas__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.canvas__child {
+  font-size: 24px;
+  font-family: sans-serif;
+  background: #222;
+  color: #fff;
+  padding: 20px 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  user-select: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.origin-marker {
+  width: 10px;
+  height: 10px;
+  background: red;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+}
