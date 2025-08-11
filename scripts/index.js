@@ -1,6 +1,7 @@
-import { enableDragToPan } from "./DragtoPan.js";
+import { enableDragToPan } from "./dragtopan.js";
+import { handleContextMenu } from "./contextmenu.js";
 
-const container = document.querySelector(".panel__main");
+const container = document.querySelector(".panel__main"); //Canvas
 
 // Center the scroll position
 function centerCanvas() {
@@ -16,6 +17,7 @@ function centerCanvas() {
 window.addEventListener("load", () => {
   requestAnimationFrame(() => {
     centerCanvas();
+    handleContextMenu(container);
 
     const content = document.querySelector(".canvas__content");
     if (content) {
