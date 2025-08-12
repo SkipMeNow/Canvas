@@ -1,20 +1,27 @@
 const contextMenu = document.querySelector("#contextMenu");
 
-export function handleContextMenu(canvas) {
-  if (!canvas || !contextMenu) return;
+let isShow = false;
 
-  canvas.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-    contextMenu.style.left = `${e.pageX}px`;
-    contextMenu.style.top = `${e.pageY}px`;
-    contextMenu.style.display = "block";
-    contextMenu.classList.add("show");
-  });
+export function showContextMenu(x, y) {
+  if (!contextMenu) return;
+  contextMenu.style.left = `${x}px`;
+  contextMenu.style.top = `${y}px`;
+  contextMenu.style.display = "block";
+  contextMenu.classList.add("show");
+  isShow = true;
+}
 
-  document.addEventListener("click", (e) => {
-    if (!contextMenu.contains(e.target)) {
-      contextMenu.style.display = "none";
-      contextMenu.classList.remove("show");
-    }
-  });
+export function hideContextMenu() {
+  if (!contextMenu) return;
+  contextMenu.style.display = "none";
+  contextMenu.classList.remove("show");
+  isShow = false;
+}
+
+export function isClickOutside(target) {
+  return contextMenu && !contextMenu.contains(target);
+}
+
+export function isContextMenuVisible() {
+  return isShow;
 }
