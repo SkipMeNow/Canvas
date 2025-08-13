@@ -1,132 +1,129 @@
 export class InputHandler {
-  constructor(elements, onInputChange) {
-    this.elements = elements;
+  constructor(onInputChange, options = {}) {
     this.onInputChange = onInputChange;
+    this.onHoverChange = options.onHoverChange || null;
+    this.onMouseEvent = options.onMouseEvent || null;
+    this.onDragChange = options.onDragChange || null;
+    this.onZoomChange = options.onZoomChange || null;
+    this.onContextMenuChange = options.onContextMenuChange || null;
 
-    this.inputState = {
-      hoverTarget: null,
-      activeTarget: null,
-      actionKey: null,
-      keys: new Set(),
-      dragging: false,
-      mousePosition: { x: 0, y: 0 },
-      eventType: null,
-      eventTarget: null,
-      eventTimestamp: null,
-      eventRef: null,
-      button: null,
-      buttons: null,
-      key: null,
-      code: null,
-      ctrlKey: false,
-      shiftKey: false,
-      altKey: false,
-      metaKey: false,
-      lastInputType: null,
+    this.inputDragState = {
+      canDrag: false,
+      isDragging: false,
+      pressStartTime: null,
+      dragThreshold: 100, // ms
+      mouseDownTarget: null,
     };
 
     this.bindEvents();
   }
 
   bindEvents() {
-    const { mainContainer } = this.elements;
-    if (!mainContainer) return;
-
-    // 🖱️ Mouse down = start drag
-    mainContainer.addEventListener("mousedown", (e) => {
-      this.inputState.dragging = true;
-      this.inputState.actionKey = "mousedown";
-      this.inputState.activeTarget = e.target;
-      mainContainer.style.cursor = "grab";
-      this.updateInput(e);
-    });
-
-    // 🖱️ Mouse move = update position + hover target
-    mainContainer.addEventListener("mousemove", (e) => {
-      this.inputState.mousePosition = { x: e.pageX, y: e.pageY };
-      this.inputState.hoverTarget = document.elementFromPoint(e.pageX, e.pageY);
-      this.updateInput(e);
-    });
-
-    // 🖱️ Mouse up = end drag
-    mainContainer.addEventListener("mouseup", (e) => {
-      this.inputState.dragging = false;
-      this.inputState.actionKey = "mouseup";
-      this.inputState.activeTarget = e.target;
-      mainContainer.style.cursor = "default";
-      this.updateInput(e);
-    });
-
-    // 🖱️ Mouse leave = cancel drag
-    mainContainer.addEventListener("mouseleave", (e) => {
-      this.inputState.actionKey = "mouseleave";
-      this.inputState.activeTarget = e.target;
-      mainContainer.style.cursor = "default";
-      this.updateInput(e);
-    });
-
-    // ⌨️ Key tracking
-    document.addEventListener("keydown", (e) => {
-      this.inputState.keys.add(e.key);
-      this.inputState.actionKey = "keydown";
-      this.updateInput(e);
-    });
-
-    document.addEventListener("keyup", (e) => {
-      this.inputState.keys.delete(e.key);
-      this.inputState.actionKey = "keyup";
-      this.updateInput(e);
-    });
+    document.addEventListener("mousedown", (e) => this.handleMouseDown(e));
+    document.addEventListener("mousemove", (e) => this.handleMouseMove(e));
+    document.addEventListener("mouseup", (e) => this.handleMouseUp(e));
+    document.addEventListener("mouseleave", (e) => this.handleMouseLeave(e));
+    document.addEventListener("keydown", (e) => this.handleKeyDown(e));
+    document.addEventListener("keyup", (e) => this.handleKeyUp(e));
+    document.addEventListener(
+      "wheel",
+      (e) => {
+        this.handleWheel(e);
+      },
+      { passive: false }
+    );
+    document.addEventListener("contextmenu", (e) => this.handleContextMenu(e));
   }
 
-  updateInput(e) {
-    const isMouseEvent = e instanceof MouseEvent;
-    const isKeyboardEvent = e instanceof KeyboardEvent;
-    const isPointerEvent = e instanceof PointerEvent;
+  setCursor(type) {
+    document.body.style.cursor = type;
+  }
 
-    // General event metadata
-    this.inputState.eventType = e.type;
-    this.inputState.eventTarget = e.target;
-    this.inputState.eventTimestamp = e.timeStamp;
-    this.inputState.eventRef = e;
-
-    // Input source
-    this.inputState.lastInputType = isMouseEvent
-      ? "mouse"
-      : isKeyboardEvent
-      ? "keyboard"
-      : isPointerEvent
-      ? "pointer"
-      : "unknown";
-
-    // Mouse & Pointer data
-    if (isMouseEvent || isPointerEvent) {
-      this.inputState.mousePosition = {
-        x: e.pageX,
-        y: e.pageY,
-      };
-      this.inputState.hoverTarget = document.elementFromPoint(e.pageX, e.pageY);
-      this.inputState.button = e.button;
-      this.inputState.buttons = e.buttons;
-      this.inputState.ctrlKey = e.ctrlKey;
-      this.inputState.shiftKey = e.shiftKey;
-      this.inputState.altKey = e.altKey;
-      this.inputState.metaKey = e.metaKey;
+  handleMouseDown(e) {
+    if (e.button === 1) {
+      e.preventDefault(); // stops auto-scroll
     }
 
-    // Keyboard data
-    if (isKeyboardEvent) {
-      this.inputState.key = e.key;
-      this.inputState.code = e.code;
-      this.inputState.ctrlKey = e.ctrlKey;
-      this.inputState.shiftKey = e.shiftKey;
-      this.inputState.altKey = e.altKey;
-      this.inputState.metaKey = e.metaKey;
+    this.inputDragState.pressStartTime = Date.now();
+    this.inputDragState.mouseDownTarget = e.target;
+    this.inputDragState.canDrag = false;
+    this.onMouseEvent?.("mousedown", e);
+  }
+
+  handleMouseMove(e) {
+    e.preventDefault();
+    const isMiddlePressed = (e.buttons & 4) !== 0;
+
+    if (this.inputDragState.pressStartTime) {
+      const duration = Date.now() - this.inputDragState.pressStartTime;
+      if (
+        duration > this.inputDragState.dragThreshold &&
+        !this.inputDragState.canDrag &&
+        isMiddlePressed
+      ) {
+        this.inputDragState.canDrag = true;
+        this.setCursor("grab");
+        this.onDragChange?.(this.inputDragState, e);
+        this.inputDragState.isDragging = true;
+      } else if (this.inputDragState.isDragging) {
+        this.onDragChange?.(this.inputDragState, e);
+      }
     }
 
-    // Dispatch to callback
-    if (this.onInputChange) {
-      this.onInputChange({ ...this.inputState }, e);
+    this.onMouseEvent?.("mousemove", e);
+  }
+
+  handleMouseUp(e) {
+    const duration = Date.now() - (this.inputDragState.pressStartTime || 0);
+
+    if (duration < this.inputDragState.dragThreshold) {
+      // Click detected
+      this.onMouseEvent?.("click", e);
+    } else if (this.inputDragState.canDrag) {
+      // Drag ended
+      this.inputDragState.canDrag = false;
+      this.inputDragState.isDragging = false;
+      this.setCursor("default");
+      this.onDragChange?.(this.inputDragState, e);
     }
+
+    this.inputDragState.pressStartTime = null;
+    this.inputDragState.canDrag = false;
+    this.inputDragState.mouseDownTarget = null;
+
+    this.onMouseEvent?.("mouseup", e);
+  }
+
+  handleMouseLeave(e) {
+    if (this.inputDragState.canDrag) {
+      this.inputDragState.canDrag = false;
+      this.inputDragState.isDragging = false;
+      this.onDragChange?.(this.inputDragState, e);
+    }
+
+    this.inputDragState.pressStartTime = null;
+    this.inputDragState.canDrag = false;
+
+    this.onMouseEvent?.("mouseleave", e);
+  }
+
+  handleKeyDown(e) {
+    this.onMouseEvent?.("keydown", e);
+  }
+
+  handleKeyUp(e) {
+    this.onMouseEvent?.("keyup", e);
+  }
+
+  handleWheel(e) {
+    if (e.ctrlKey) {
+      e.preventDefault();
+      this.onZoomChange?.(e);
+    }
+  }
+
+  handleContextMenu(e) {
+    e.preventDefault();
+    this.onContextMenuChange?.(e);
   }
 }

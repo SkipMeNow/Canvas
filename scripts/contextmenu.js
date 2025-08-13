@@ -4,8 +4,8 @@ let isShow = false;
 
 export function showContextMenu(x, y) {
   if (!contextMenu) return;
-  contextMenu.style.left = `${x}px`;
-  contextMenu.style.top = `${y}px`;
+  contextMenu.style.left = `${x - 10}px`;
+  contextMenu.style.top = `${y - 10}px`;
   contextMenu.style.display = "block";
   contextMenu.classList.add("show");
   isShow = true;
