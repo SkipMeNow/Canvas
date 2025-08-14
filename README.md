@@ -1,2 +1,2 @@
 # Forma
-Forma is a lightweight, desktop based design environment built with Electron, React, and Tailwind CSS. Inspired by tools like Figma but engineered for modularity and offline freedom, Forma empowers developers and designers to craft, animate, and export UI components with precision and style without the paywall.
+Forma is a creative playground for designers and developers—a modular UI design tool built to streamline workflows and amplify emotional resonance. With a focus on reusable architecture, intuitive input handling, and dynamic context menus, Forma empowers users to craft interfaces that are both elegant and maintainable.
