@@ -15,6 +15,8 @@ export class InputHandler {
       mouseDownTarget: null,
     };
 
+    this.isContextMenuOpen = false;
+
     this.bindEvents();
   }
 
@@ -41,7 +43,7 @@ export class InputHandler {
 
   handleMouseDown(e) {
     if (e.button === 1) {
-      e.preventDefault(); // stops auto-scroll
+      e.preventDefault();
     }
 
     this.inputDragState.pressStartTime = Date.now();
@@ -124,6 +126,8 @@ export class InputHandler {
 
   handleContextMenu(e) {
     e.preventDefault();
-    this.onContextMenuChange?.(e);
+    if (!e.target.closest("#canvas, #canvas-Node")) return;
+    this.isContextMenuOpen = true;
+    this.onContextMenuChange?.(true, e);
   }
 }

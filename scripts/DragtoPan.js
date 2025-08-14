@@ -7,7 +7,6 @@ export function handleDragMouseDown(e, mainContainer) {
   isDragging = true;
   startX = e.pageX + mainContainer.scrollLeft;
   startY = e.pageY + mainContainer.scrollTop;
-  // mainContainer.style.cursor = "grab";
 }
 
 export function handleDragMouseMove(e, mainContainer) {
@@ -16,14 +15,8 @@ export function handleDragMouseMove(e, mainContainer) {
   mainContainer.scrollTop = startY - e.pageY;
 }
 
-export function handleDragMouseUp(mainContainer) {
+export function handleDragMouseUp() {
   isDragging = false;
-  // mainContainer.style.cursor = "default";
-}
-
-export function handleDragMouseLeave(mainContainer) {
-  isDragging = false;
-  // mainContainer.style.cursor = "default";
 }
 
 export function handleZoomWheel(e, content) {

@@ -38,3 +38,8 @@
     transform: scale(1);
   }
 }
+
+.arrow {
+  float: right;
+  font-size: 12px;
+}

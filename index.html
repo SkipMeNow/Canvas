@@ -12,28 +12,26 @@
 </head>
 
 <body>
-  <div class="panel" id="panel">
+  <div class="panel">
     <div class="panel__topbar">topbar</div>
     <div class="panel__sidebar">sidebar</div>
-    <div class="panel__main">
-      <div class="canvas__wrapper">
+    <div class="panel__main" id="panel">
+      <div class="canvas__wrapper" id="canvas">
         <div class="canvas__content">
-          <div class="canvas__child">
-            <h2 class="ui-element">Hello Forma 👋</h2>
+          <div class="canvas__child ui-element" id="canvas-Node">
+            <h2>Node</h2>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="context-menu" id="contextMenu">
-    <ul>
-      <li>Edit</li>
-      <li>Delete</li>
-      <li>Duplicate</li>
-      <li>Properties</li>
-    </ul>
-  </div>
+  <template id="contextMenuTemplate">
+    <div class="context-menu" id="contextMenu">
+      <ul>
+      </ul>
+    </div>
+  </template>
 
   <script type="module" src="./scripts/index.js"></script>
 </body>
