@@ -15,7 +15,9 @@ export class InputHandler {
       mouseDownTarget: null,
     };
 
-    this.isContextMenuOpen = false;
+    this.inputContextMenu = {
+      isContextMenuOpen: false,
+    };
 
     this.bindEvents();
   }
@@ -35,6 +37,14 @@ export class InputHandler {
       { passive: false }
     );
     document.addEventListener("contextmenu", (e) => this.handleContextMenu(e));
+
+    const contextMenuEl = document.getElementById("contextMenu");
+    if (contextMenuEl) {
+      contextMenuEl.addEventListener(
+        "mouseleave",
+        this.handleContextMenuLeave.bind(this)
+      );
+    }
   }
 
   setCursor(type) {
@@ -50,10 +60,12 @@ export class InputHandler {
     this.inputDragState.mouseDownTarget = e.target;
     this.inputDragState.canDrag = false;
     this.onMouseEvent?.("mousedown", e);
+    this.onInputChange?.(e);
   }
 
   handleMouseMove(e) {
     e.preventDefault();
+    // Drag
     const isMiddlePressed = (e.buttons & 4) !== 0;
 
     if (this.inputDragState.pressStartTime) {
@@ -69,6 +81,7 @@ export class InputHandler {
         this.inputDragState.isDragging = true;
       } else if (this.inputDragState.isDragging) {
         this.onDragChange?.(this.inputDragState, e);
+        this.onInputChange?.(e);
       }
     }
 
@@ -94,6 +107,7 @@ export class InputHandler {
     this.inputDragState.mouseDownTarget = null;
 
     this.onMouseEvent?.("mouseup", e);
+    this.onInputChange?.(e);
   }
 
   handleMouseLeave(e) {
@@ -107,14 +121,17 @@ export class InputHandler {
     this.inputDragState.canDrag = false;
 
     this.onMouseEvent?.("mouseleave", e);
+    this.onInputChange?.(e);
   }
 
   handleKeyDown(e) {
     this.onMouseEvent?.("keydown", e);
+    this.onInputChange?.(e);
   }
 
   handleKeyUp(e) {
     this.onMouseEvent?.("keyup", e);
+    this.onInputChange?.(e);
   }
 
   handleWheel(e) {
@@ -122,12 +139,25 @@ export class InputHandler {
       e.preventDefault();
       this.onZoomChange?.(e);
     }
+    this.onInputChange?.(e);
   }
 
   handleContextMenu(e) {
     e.preventDefault();
+    if (this.inputContextMenu.isContextMenuOpen) this.clearContextMenu(e);
     if (!e.target.closest("#canvas, #canvas-Node")) return;
-    this.isContextMenuOpen = true;
+    this.inputContextMenu.isContextMenuOpen = true;
     this.onContextMenuChange?.(true, e);
+  }
+
+  clearContextMenu(e) {
+    this.inputContextMenu.isContextMenuOpen = false;
+    this.onContextMenuChange?.(false, e);
+  }
+
+  handleContextMenuLeave(e) {
+    setTimeout(() => {
+      this.clearContextMenu();
+    }, 300);
   }
 }

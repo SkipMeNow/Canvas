@@ -5,10 +5,6 @@ document.body.appendChild(contextMenu);
 
 let isShow = false;
 
-contextMenu.addEventListener("mouseleave", (e) => {
-  hideContextMenu();
-});
-
 export function showContextMenu(x, y, target) {
   if (!contextMenu) return;
   contextMenu.style.left = `${x - 10}px`;
@@ -60,12 +56,12 @@ function handleContextMenu(target) {
   const ul = contextMenu.querySelector("ul");
   ul.innerHTML = "";
 
-  console.log(target.closest("#canvas-Node"));
   if (target.closest("#canvas-Node")) {
-    console.log("Node");
     CreateLink("Edit", false, (e) => {});
     CreateLink("Delete", false, (e) => {});
   } else if (target.closest("#canvas")) {
-    CreateLink("Create", true, (e) => {});
+    CreateLink("Create", true, (e) => {
+      
+    });
   }
 }

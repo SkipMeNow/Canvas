@@ -29,3 +29,11 @@ export function handleZoomWheel(e, content) {
   scale = Math.min(Math.max(0.1, scale), 4);
   content.style.transform = `scale(${scale})`;
 }
+
+export function getZoom() {
+  return scale;
+}
+
+export function getPan(mainContainer) {
+  return { x: mainContainer.scrollLeft, y: mainContainer.scrollTop };
+}
