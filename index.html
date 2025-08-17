@@ -16,15 +16,25 @@
     <div class="panel__topbar">topbar</div>
     <div class="panel__sidebar">sidebar</div>
     <div class="panel__main" id="panel">
-      <div class="canvas__wrapper" id="canvas">
-        <div class="canvas__content">
-          <div class="canvas__child ui-element" id="canvas-Node">
-            <h2>Node</h2>
-          </div>
+      <div id="canvas">
+        <div class="canvas__wrapper">
+          <div id="canvasContent" class="canvas__content"></div>
         </div>
       </div>
     </div>
   </div>
+
+  <template data-type="base">
+    <div class="canvas__child ui-element" id="canvas__Node_base">
+      <h2>Base Node</h2>
+    </div>
+  </template>
+
+  <template data-type="circle">
+    <div class="canvas__child ui-element" id="canvas__Node_circle">
+      <h2>Circle Node</h2>
+    </div>
+  </template>
 
   <template id="contextMenuTemplate">
     <div class="context-menu" id="contextMenu">

@@ -5,14 +5,16 @@ document.body.appendChild(contextMenu);
 
 let isShow = false;
 
-export function showContextMenu(x, y, target) {
+export function showContextMenu(x, y, target, engine) {
   if (!contextMenu) return;
+
   contextMenu.style.left = `${x - 10}px`;
   contextMenu.style.top = `${y - 10}px`;
   contextMenu.style.display = "block";
   contextMenu.classList.add("show");
   isShow = true;
-  handleContextMenu(target);
+
+  handleContextMenu(target, engine, x - 10, y - 10); // Pass raw numbers
 }
 
 export function hideContextMenu() {
@@ -35,11 +37,11 @@ function CreateLink(label, addArrow, onClick) {
 
   const li = document.createElement("li");
   li.textContent = label;
-  // li.classList.add()
+  li.setAttribute("data-action", label.toLowerCase());
 
   if (addArrow) {
     const arrow = document.createElement("span");
-    arrow.classList.add("arrow");
+    arrow.classList.add("context-menu__arrow");
     arrow.textContent = "▶";
     li.appendChild(arrow);
   }
@@ -52,16 +54,29 @@ function CreateLink(label, addArrow, onClick) {
   });
 }
 
-function handleContextMenu(target) {
+function handleContextMenu(target, engine, x, y) {
   const ul = contextMenu.querySelector("ul");
   ul.innerHTML = "";
 
-  if (target.closest("#canvas-Node")) {
-    CreateLink("Edit", false, (e) => {});
-    CreateLink("Delete", false, (e) => {});
-  } else if (target.closest("#canvas")) {
+  const isNode = target.closest(".canvas__child");
+  const isCanvas = target.closest("#canvas");
+
+  if (isNode) {
+    CreateLink("Edit", false, (e) => {
+      console.log("Edit node");
+    });
+
+    CreateLink("Delete", false, (e) => {
+      const node = target.closest(".canvas__child");
+      if (node) engine.removeNode?.(node);
+    });
+  } else if (isCanvas) {
     CreateLink("Create", true, (e) => {
-      
+      engine.addNode("base", {
+        label: "New Node",
+        x: parseInt(x) + 20,
+        y: parseInt(y) + 20,
+      });
     });
   }
 }

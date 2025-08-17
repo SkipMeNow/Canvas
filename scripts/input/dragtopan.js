@@ -20,14 +20,33 @@ export function handleDragMouseUp() {
 }
 
 export function handleZoomWheel(e, content) {
-  if (!content) {
-    console.warn("handleWheel: content element not found.");
-    return;
-  }
+  e.preventDefault();
 
-  scale += e.deltaY * -0.001;
-  scale = Math.min(Math.max(0.1, scale), 4);
+  const container = content.parentElement;
+  const containerRect = container.getBoundingClientRect();
+
+  const oldScale = scale;
+  const zoomStep = 0.1;
+  const delta = e.deltaY < 0 ? zoomStep : -zoomStep;
+  const newScale = Math.min(Math.max(0.1, oldScale + delta), 4);
+  const scaleRatio = newScale / oldScale;
+
+  // Mouse position relative to content's unscaled coordinate space
+  const mouseX =
+    (e.clientX - containerRect.left + container.scrollLeft) / oldScale;
+  const mouseY =
+    (e.clientY - containerRect.top + container.scrollTop) / oldScale;
+
+  // Apply new scale
+  scale = newScale;
   content.style.transform = `scale(${scale})`;
+
+  // Adjust scroll to keep mouse position fixed
+  const newScrollLeft = mouseX * scale - (e.clientX - containerRect.left);
+  const newScrollTop = mouseY * scale - (e.clientY - containerRect.top);
+
+  container.scrollLeft = newScrollLeft;
+  container.scrollTop = newScrollTop;
 }
 
 export function getZoom() {

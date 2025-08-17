@@ -135,8 +135,8 @@ export class InputHandler {
   }
 
   handleWheel(e) {
+    e.preventDefault();
     if (e.ctrlKey) {
-      e.preventDefault();
       this.onZoomChange?.(e);
     }
     this.onInputChange?.(e);

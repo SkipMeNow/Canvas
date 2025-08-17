@@ -26,8 +26,6 @@ export function addConnection(from, to) {
 export function updateMeta(zoom, pan) {
   canvasState.meta.zoom = zoom;
   canvasState.meta.pan = pan;
-
-  console.log(canvasState.meta);
 }
 
 // Serializes the canvas state to json.
