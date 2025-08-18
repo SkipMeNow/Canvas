@@ -19,19 +19,19 @@ export function handleDragMouseUp() {
   isDragging = false;
 }
 
-export function handleZoomWheel(e, content) {
+export function handleZoomWheel(e, viewport) {
   e.preventDefault();
 
-  const container = content.parentElement;
+  const container = document.getElementById("panel"); // or pass it in
   const containerRect = container.getBoundingClientRect();
 
   const oldScale = scale;
   const zoomStep = 0.1;
   const delta = e.deltaY < 0 ? zoomStep : -zoomStep;
-  const newScale = Math.min(Math.max(0.1, oldScale + delta), 4);
+  const newScale = Math.min(Math.max(0.1, oldScale + delta), 1);
   const scaleRatio = newScale / oldScale;
 
-  // Mouse position relative to content's unscaled coordinate space
+  // Mouse position relative to viewport's unscaled coordinate space
   const mouseX =
     (e.clientX - containerRect.left + container.scrollLeft) / oldScale;
   const mouseY =
@@ -39,7 +39,7 @@ export function handleZoomWheel(e, content) {
 
   // Apply new scale
   scale = newScale;
-  content.style.transform = `scale(${scale})`;
+  viewport.style.transform = `scale(${scale})`;
 
   // Adjust scroll to keep mouse position fixed
   const newScrollLeft = mouseX * scale - (e.clientX - containerRect.left);
@@ -50,7 +50,7 @@ export function handleZoomWheel(e, content) {
 }
 
 export function getZoom() {
-  return scale;
+  return parseFloat(scale);
 }
 
 export function getPan(mainContainer) {

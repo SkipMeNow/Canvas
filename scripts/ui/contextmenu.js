@@ -1,3 +1,5 @@
+import { getZoom } from "../input/dragtopan.js";
+
 const template = document.getElementById("contextMenuTemplate");
 const clone = template.content.cloneNode(true);
 const contextMenu = clone.querySelector("#contextMenu");
@@ -51,6 +53,7 @@ function CreateLink(label, addArrow, onClick) {
   li.addEventListener("click", (e) => {
     e.stopPropagation();
     onClick(e, li);
+    hideContextMenu();
   });
 }
 
@@ -76,6 +79,7 @@ function handleContextMenu(target, engine, x, y) {
         label: "New Node",
         x: parseInt(x) + 20,
         y: parseInt(y) + 20,
+        zoomLevel: getZoom(),
       });
     });
   }

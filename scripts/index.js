@@ -3,8 +3,8 @@ import { CanvasEngine } from "./canvas/canvasEngine.js";
 window.addEventListener("load", () => {
   const mainContainer = document.querySelector("#panel");
   const canvas = document.querySelector("#canvas");
-  const canvasWrapper = document.querySelector(".canvas__wrapper");
   const canvasContent = document.querySelector("#canvasContent");
+  const viewport = document.getElementById("canvasViewport");
 
   if (!mainContainer || !canvas) {
     console.warn("Main container or canvas not found.");
@@ -14,7 +14,7 @@ window.addEventListener("load", () => {
   const engine = new CanvasEngine(
     mainContainer,
     canvas,
-    canvasWrapper,
+    viewport,
     canvasContent
   );
   engine.init();

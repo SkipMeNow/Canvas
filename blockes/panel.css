@@ -30,10 +30,7 @@
 
 .panel__main {
   grid-area: main;
-  padding: 0;
-  /* Optional: remove padding for full canvas */
   overflow: auto;
-  /* handles both x and y scroll */
   width: 100%;
   height: 100%;
   position: relative;

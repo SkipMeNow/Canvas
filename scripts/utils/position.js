@@ -5,18 +5,13 @@
  * @param {HTMLElement} target - The element to position inside
  * @returns {{ x: number, y: number }} - Local coordinates
  */
-export function getLocalCoords(pageX, pageY, target) {
-  if (!target || typeof pageX !== "number" || typeof pageY !== "number") {
-    console.warn("Invalid input to getLocalCoords");
-    return { x: 0, y: 0 };
+export function getLocalCoords(clientX, clientY, container, scale = 1) {
+  if (!(container instanceof Element)) {
+    throw new TypeError("getLocalCoords: container must be a DOM Element");
   }
 
-  const rect = target.getBoundingClientRect();
-  const scrollX = window.scrollX;
-  const scrollY = window.scrollY;
-
-  const localX = pageX - (rect.left + scrollX);
-  const localY = pageY - (rect.top + scrollY);
-
-  return { x: localX, y: localY };
+  const rect = container.getBoundingClientRect();
+  const x = (clientX - rect.left + container.scrollLeft) / scale;
+  const y = (clientY - rect.top + container.scrollTop) / scale;
+  return { x, y };
 }

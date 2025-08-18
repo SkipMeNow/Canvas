@@ -12,10 +12,10 @@ import { updateMeta } from "../state/canvasState.js";
 import { createCanvasNode } from "../factories/canvasNodeFactory.js";
 
 export class CanvasEngine {
-  constructor(containerEl, canvasEl, canvasWrapperEL, canvasContentEl) {
-    this.container = containerEl;
+  constructor(mainContainerEl, canvasEl, viewport, canvasContentEl) {
+    this.mainContainer = mainContainerEl;
     this.canvas = canvasEl;
-    this.canvasWrapper = canvasWrapperEL;
+    this.viewport = viewport;
     this.canvasContent = canvasContentEl;
     this.inputHandler = null;
     this.events = {
@@ -32,30 +32,33 @@ export class CanvasEngine {
 
   centerCanvas() {
     const centerX =
-      this.container.scrollWidth / 2 - this.container.clientWidth / 2;
+      this.mainContainer.scrollWidth / 2 - this.mainContainer.clientWidth / 2;
     const centerY =
-      this.container.scrollHeight / 2 - this.container.clientHeight / 2;
-    this.container.scrollLeft = centerX;
-    this.container.scrollTop = centerY;
+      this.mainContainer.scrollHeight / 2 - this.mainContainer.clientHeight / 2;
+    this.mainContainer.scrollLeft = centerX;
+    this.mainContainer.scrollTop = centerY;
   }
   setupInteractions() {
     this.inputHandler = new InputHandler(
       (input, event) => {
-        updateMeta(getZoom(), getPan(this.container));
+        updateMeta(getZoom(), getPan(this.mainContainer));
       },
       {
         onDragChange: (input, event) => {
           if (input.canDrag && input.isDragging === false) {
-            handleDragMouseDown(event, this.container);
+            handleDragMouseDown(event, this.mainContainer);
           } else if (input.isDragging) {
-            handleDragMouseMove(event, this.container);
+            handleDragMouseMove(event, this.mainContainer);
           } else {
             handleDragMouseUp();
           }
         },
         onZoomChange: (event) => {
-          handleZoomWheel(event, this.canvasWrapper); // Use the scaled element
-          updateMeta(getZoom(), getPan(this.container)); // Sync zoom + pan
+          handleZoomWheel(event, this.viewport); // Use the scaled element
+          document.getElementById("zoomHUD").textContent = `${Math.round(
+            getZoom() * 100
+          )}%`;
+          updateMeta(getZoom(), getPan(this.mainContainer)); // Sync zoom + pan
           this.dispatch("onZoomChanged", { zoom: getZoom() });
         },
         onContextMenuChange: (toggle, event) => {
@@ -67,61 +70,6 @@ export class CanvasEngine {
     );
   }
 
-  setZoom(level, center = true) {
-    const content = this.canvasContent;
-    const container = this.container;
-
-    const oldZoom = getZoom();
-    const newZoom = Math.min(Math.max(0.1, level), 4);
-    const scaleRatio = newZoom / oldZoom;
-
-    const centerX = container.scrollLeft + container.clientWidth / 2;
-    const centerY = container.scrollTop + container.clientHeight / 2;
-
-    if (center) {
-      const newScrollLeft = centerX * scaleRatio - container.clientWidth / 2;
-      const newScrollTop = centerY * scaleRatio - container.clientHeight / 2;
-
-      container.scrollLeft = newScrollLeft;
-      container.scrollTop = newScrollTop;
-    }
-
-    content.style.transform = `scale(${newZoom})`;
-    scale = newZoom;
-
-    updateMeta(getZoom(), getPan(container));
-    this.dispatch("onZoomChanged", { zoom: newZoom });
-  }
-
-  fitToCanvas() {
-    const nodes = this.getNodes();
-    if (nodes.length === 0) return;
-
-    const bounds = nodes.reduce(
-      (acc, node) => {
-        const rect = node.getBoundingClientRect();
-        acc.left = Math.min(acc.left, rect.left);
-        acc.top = Math.min(acc.top, rect.top);
-        acc.right = Math.max(acc.right, rect.right);
-        acc.bottom = Math.max(acc.bottom, rect.bottom);
-        return acc;
-      },
-      { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity }
-    );
-
-    const contentWidth = bounds.right - bounds.left;
-    const contentHeight = bounds.bottom - bounds.top;
-
-    const containerWidth = this.container.clientWidth;
-    const containerHeight = this.container.clientHeight;
-
-    const scaleX = containerWidth / contentWidth;
-    const scaleY = containerHeight / contentHeight;
-    const fitScale = Math.min(scaleX, scaleY, 1.0); // Cap at 100%
-
-    this.setZoom(fitScale);
-  }
-
   /**
    * Injects a node into the canvas.
    * @param {string} type - Node template type.
@@ -129,7 +77,7 @@ export class CanvasEngine {
    */
   addNode(type, options = {}) {
     const node = createCanvasNode(type, options);
-    this.canvasContent.appendChild(node);
+    this.viewport.appendChild(node);
     this.dispatch("onNodeAdded", { node, type, options });
     return node;
   }
@@ -142,8 +90,8 @@ export class CanvasEngine {
     const node =
       typeof nodeOrId === "string" ? this.findNodeById(nodeOrId) : nodeOrId;
 
-    if (node && this.canvasContent.contains(node)) {
-      this.canvasContent.removeChild(node);
+    if (node && this.viewport.contains(node)) {
+      this.viewport.removeChild(node);
       this.dispatch("onNodeRemoved", { node });
     }
   }
@@ -152,7 +100,7 @@ export class CanvasEngine {
    * Clears all nodes from the canvas.
    */
   clearCanvas() {
-    this.canvasContent.innerHTML = "";
+    this.viewport.innerHTML = "";
     this.dispatch("onCanvasCleared");
   }
 
@@ -160,7 +108,7 @@ export class CanvasEngine {
    * Returns all canvas nodes.
    */
   getNodes() {
-    return [...this.canvasContent.querySelectorAll(".canvas__child")];
+    return [...this.viewport.querySelectorAll(".canvas__child")];
   }
 
   /**
@@ -169,7 +117,7 @@ export class CanvasEngine {
    * @returns {HTMLElement|null}
    */
   findNodeById(id) {
-    return this.canvasContent.querySelector(`#${id}`);
+    return this.viewport.querySelector(`#${id}`);
   }
 
   /**

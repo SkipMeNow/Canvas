@@ -43,8 +43,3 @@
   float: right;
   font-size: 12px;
 }
-
-#canvasContent {
-  transition: transform 120ms ease-out;
-  transform-origin: top left;
-}
