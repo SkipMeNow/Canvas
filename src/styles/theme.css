@@ -1,0 +1,24 @@
+:root {
+    /* Base tokens */
+    --font-family: 'Inter', sans-serif;
+    --transition-speed: 0.3s;
+
+    /* Light theme defaults */
+    --bg-color: #3a3a3e;
+    --bg-topbar: #2e2e32;
+    --bg-sidemenu: #444448;
+    --text-primary: #e0e0e0;
+    --text-muted: #a0a0a0;
+    --accent: #4e94ce;
+    --border-color: #5a5a5e;
+}
+
+body.dark {
+    --bg-color: #2a2a2e;
+    --bg-topbar: #1f1f23;
+    --bg-sidemenu: #232327;
+    --text-primary: #dcdcdc;
+    --text-muted: #9a9a9a;
+    --accent: #4e94ce;
+    --border-color: #3a3a3e;
+}
