@@ -1,54 +1,16 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="author" content="Rafael A">
-  <meta name="keywords" content="html, css">
-  <link rel="stylesheet" href="./index.css">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-  <title>Forma</title>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canvas</title>
 </head>
 
 <body>
-  <div class="panel">
-    <div class="panel__topbar">topbar</div>
-    <div class="panel__sidebar">
-      <button>Hierarc</button>
-      <button>properties</button>
-    </div>
-    <div class="panel__main" id="panel">
-      <div id="zoomHUD">100%</div>
-      <div id="canvas" class="canvas">
-        <div class="canvas__viewport">
-          <div class="canvas__child node__header" style="left: 100px; top: 150px;">Node A</div>
-          <div class="canvas__child node__header" style="left: 300px; top: 250px;">Node B</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <template data-type="base">
-    <div class="canvas__child" id="canvas__Node_base">
-      <h2 class="node__header">Base Node</h2>
-    </div>
-  </template>
-
-  <template data-type="circle">
-    <div class="canvas__child" id="canvas__Node_circle">
-      <h2 class="node__header">Circle Node</h2>
-    </div>
-  </template>
-
-  <template id="contextMenuTemplate">
-    <div class="context-menu" id="contextMenu">
-      <ul>
-      </ul>
-    </div>
-  </template>
-
-  <script type="module" src="./scripts/index.js"></script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 
 </html>

@@ -1,0 +1,51 @@
+@import url("./theme.css");
+
+/* Reset */
+body,
+html,
+#root {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+/* Grid layout */
+.app-grid {
+    display: grid;
+    grid-template-rows: 60px 1fr;
+    grid-template-columns: 240px 1fr;
+    grid-template-areas:
+        "topbar topbar"
+        "sidebar main";
+    height: 100vh;
+}
+
+/* Topbar spans full width */
+.topbar {
+    grid-area: topbar;
+    background-color: var(--bg-topbar);
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Sidebar stays left */
+.sidebar {
+    grid-area: sidebar;
+    background-color: var(--bg-sidemenu);
+    color: white;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Main content scrolls */
+.main-content {
+    grid-area: main;
+    padding: 20px;
+    background-color: var(--bg-color);
+    overflow-y: auto;
+}
