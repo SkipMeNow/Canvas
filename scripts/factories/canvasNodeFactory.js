@@ -42,7 +42,7 @@ export function createCanvasNode(
 
   // Positioning
   if (options.x !== undefined && options.y !== undefined) {
-    const canvasContent = document.querySelector("#canvasViewport");
+    const canvasContent = document.querySelector(".canvas__viewport");
     const { x, y } = getLocalCoords(
       options.x,
       options.y,

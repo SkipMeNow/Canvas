@@ -12,11 +12,10 @@ import { updateMeta } from "../state/canvasState.js";
 import { createCanvasNode } from "../factories/canvasNodeFactory.js";
 
 export class CanvasEngine {
-  constructor(mainContainerEl, canvasEl, viewport, canvasContentEl) {
+  constructor(mainContainerEl, canvasEl, viewport) {
     this.mainContainer = mainContainerEl;
     this.canvas = canvasEl;
     this.viewport = viewport;
-    this.canvasContent = canvasContentEl;
     this.inputHandler = null;
     this.events = {
       onNodeAdded: [],
@@ -54,11 +53,11 @@ export class CanvasEngine {
           }
         },
         onZoomChange: (event) => {
-          handleZoomWheel(event, this.viewport); // Use the scaled element
+          handleZoomWheel(event, this.canvas); // Use the scaled element
           document.getElementById("zoomHUD").textContent = `${Math.round(
             getZoom() * 100
           )}%`;
-          updateMeta(getZoom(), getPan(this.mainContainer)); // Sync zoom + pan
+          updateMeta(getZoom(), getPan(this.canvas)); // Sync zoom + pan
           this.dispatch("onZoomChanged", { zoom: getZoom() });
         },
         onContextMenuChange: (toggle, event) => {
@@ -77,6 +76,7 @@ export class CanvasEngine {
    */
   addNode(type, options = {}) {
     const node = createCanvasNode(type, options);
+    console.log(this.viewport);
     this.viewport.appendChild(node);
     this.dispatch("onNodeAdded", { node, type, options });
     return node;

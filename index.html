@@ -14,26 +14,30 @@
 <body>
   <div class="panel">
     <div class="panel__topbar">topbar</div>
-    <div class="panel__sidebar">sidebar</div>
+    <div class="panel__sidebar">
+      <button>Hierarchy</button>
+      <button>properties</button>
+    </div>
     <div class="panel__main" id="panel">
       <div id="zoomHUD">100%</div>
       <div id="canvas" class="canvas">
-        <div id="canvasContent" class="canvas__content">
-          <div id="canvasViewport" class="canvas__viewport"></div>
+        <div class="canvas__viewport">
+          <div class="canvas__child node__header" style="left: 100px; top: 150px;">Node A</div>
+          <div class="canvas__child node__header" style="left: 300px; top: 250px;">Node B</div>
         </div>
       </div>
     </div>
   </div>
 
   <template data-type="base">
-    <div class="canvas__child ui-element" id="canvas__Node_base">
-      <h2>Base Node</h2>
+    <div class="canvas__child" id="canvas__Node_base">
+      <h2 class="node__header">Base Node</h2>
     </div>
   </template>
 
   <template data-type="circle">
-    <div class="canvas__child ui-element" id="canvas__Node_circle">
-      <h2>Circle Node</h2>
+    <div class="canvas__child" id="canvas__Node_circle">
+      <h2 class="node__header">Circle Node</h2>
     </div>
   </template>
 

@@ -1,58 +1,85 @@
-let isDragging = false;
-let startX = 0;
-let startY = 0;
-let scale = 1;
+let _isDragging = false;
+let _startX = 0;
+let _startY = 0;
+let _scale = 1;
 
-export function handleDragMouseDown(e, mainContainer) {
-  isDragging = true;
-  startX = e.pageX + mainContainer.scrollLeft;
-  startY = e.pageY + mainContainer.scrollTop;
+// Clamp utility
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+export function handleDragMouseDown(e) {
+  _isDragging = true;
+  _startX = e.pageX;
+  _startY = e.pageY;
 }
 
 export function handleDragMouseMove(e, mainContainer) {
-  if (!isDragging) return;
-  mainContainer.scrollLeft = startX - e.pageX;
-  mainContainer.scrollTop = startY - e.pageY;
+  if (!_isDragging) return;
+
+  const deltaX = (_startX - e.pageX) / _scale;
+  const deltaY = (_startY - e.pageY) / _scale;
+
+  mainContainer.scrollLeft += deltaX;
+  mainContainer.scrollTop += deltaY;
+
+  _startX = e.pageX;
+  _startY = e.pageY;
 }
 
 export function handleDragMouseUp() {
-  isDragging = false;
+  _isDragging = false;
 }
 
-export function handleZoomWheel(e, viewport) {
+export function handleZoomWheel(e, canvas) {
   e.preventDefault();
 
-  const container = document.getElementById("panel"); // or pass it in
-  const containerRect = container.getBoundingClientRect();
+  const panel = canvas.parentElement;
+  const panelRect = panel.getBoundingClientRect();
 
-  const oldScale = scale;
+  const oldScale = _scale;
   const zoomStep = 0.1;
   const delta = e.deltaY < 0 ? zoomStep : -zoomStep;
-  const newScale = Math.min(Math.max(0.1, oldScale + delta), 1);
-  const scaleRatio = newScale / oldScale;
+  const newScale = clamp(oldScale + delta, 0.5, 1);
 
-  // Mouse position relative to viewport's unscaled coordinate space
-  const mouseX =
-    (e.clientX - containerRect.left + container.scrollLeft) / oldScale;
-  const mouseY =
-    (e.clientY - containerRect.top + container.scrollTop) / oldScale;
+  const mouseX = e.clientX - panelRect.left + panel.scrollLeft;
+  const mouseY = e.clientY - panelRect.top + panel.scrollTop;
 
-  // Apply new scale
-  scale = newScale;
-  viewport.style.transform = `scale(${scale})`;
+  canvas.style.transformOrigin = `${mouseX}px ${mouseY}px`;
+  _scale = newScale;
+  canvas.style.transform = `scale(${_scale})`;
 
-  // Adjust scroll to keep mouse position fixed
-  const newScrollLeft = mouseX * scale - (e.clientX - containerRect.left);
-  const newScrollTop = mouseY * scale - (e.clientY - containerRect.top);
+  let newScrollLeft =
+    (mouseX * newScale) / oldScale - (e.clientX - panelRect.left);
+  let newScrollTop =
+    (mouseY * newScale) / oldScale - (e.clientY - panelRect.top);
 
-  container.scrollLeft = newScrollLeft;
-  container.scrollTop = newScrollTop;
+  const scaledWidth = canvas.offsetWidth * _scale;
+  const scaledHeight = canvas.offsetHeight * _scale;
+
+  newScrollLeft = clamp(newScrollLeft, 0, scaledWidth - panel.clientWidth);
+  newScrollTop = clamp(newScrollTop, 0, scaledHeight - panel.clientHeight);
+
+  panel.scrollLeft = newScrollLeft;
+  panel.scrollTop = newScrollTop;
+
+  if (newScale < oldScale) {
+    const zoomRatio = newScale / oldScale;
+    const centerX = scaledWidth / 2;
+    const centerY = scaledHeight / 2;
+
+    panel.scrollLeft = centerX - (centerX - panel.scrollLeft) * zoomRatio;
+    panel.scrollTop = centerY - (centerY - panel.scrollTop) * zoomRatio;
+  }
 }
 
 export function getZoom() {
-  return parseFloat(scale);
+  return parseFloat(_scale);
 }
 
 export function getPan(mainContainer) {
-  return { x: mainContainer.scrollLeft, y: mainContainer.scrollTop };
+  return {
+    x: mainContainer.scrollLeft,
+    y: mainContainer.scrollTop,
+  };
 }
