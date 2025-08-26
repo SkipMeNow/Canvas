@@ -1,4 +1,5 @@
 @import url("./theme.css");
+@import url("./variables.css");
 
 /* Reset */
 body,
@@ -13,7 +14,7 @@ html,
 .app-grid {
     display: grid;
     grid-template-rows: 60px 1fr;
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: 400px 1fr;
     grid-template-areas:
         "topbar topbar"
         "sidebar main";
@@ -27,25 +28,42 @@ html,
     color: white;
     display: flex;
     align-items: center;
-    padding: 0 20px;
+    padding: 0 var(--padding-md);
     position: sticky;
     top: 0;
     z-index: 1000;
 }
 
 /* Sidebar stays left */
-.sidebar {
-    grid-area: sidebar;
-    background-color: var(--bg-sidemenu);
-    color: white;
-    padding: 20px;
+
+.main-content {
+    padding: var(--padding-md);
+    background-color: var(--bg-color);
     overflow-y: auto;
 }
 
-/* Main content scrolls */
-.main-content {
-    grid-area: main;
-    padding: 20px;
-    background-color: var(--bg-color);
-    overflow-y: auto;
+.panelGroup {
+    width: 100vw;
+}
+
+.resizableHandle {
+    width: 4px;
+    background-color: var(--border-color);
+}
+
+.sidebar::-webkit-scrollbar,
+.main-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.main-content::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: var(--border-radius-md);
+}
+
+p {
+    margin: 0;
+    padding: 0;
+    width: 100%;
 }

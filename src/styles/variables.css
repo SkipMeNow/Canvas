@@ -1,0 +1,20 @@
+:root {
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 16px;
+
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+
+    --padding-xs: 4px;
+    --padding-sm: 8px;
+    --padding-md: 16px;
+
+    --font-size-s: 8px;
+    --font-size-m: 16px;
+    --font-size-l: 24px;
+
+    --font-size-base: 16px;
+    --transition-fast: 0.2s ease-in-out;
+}
